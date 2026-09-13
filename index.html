@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#23634d">
   <title>Wortweise – Sprechen. Schreiben. Zählen.</title>
-  <link rel="stylesheet" href="style.css?v=8">
-  <script src="app.js?v=8" defer></script>
+  <link rel="stylesheet" href="style.css?v=9">
+  <script src="app.js?v=9" defer></script>
 </head>
 <body>
   <main>
@@ -14,7 +14,7 @@
       <div class="editor">
         <div class="editor-heading"><label for="text-input">Dein Text</label><span id="language-badge" class="language">Automatisch</span></div>
         <textarea id="text-input" placeholder="Hier ist Platz für deine Gedanken …&#10;&#10;Tippe deinen Text oder aktiviere das Mikrofon, um loszusprechen." spellcheck="true" aria-describedby="editor-help"></textarea>
-        <div class="editor-footer"><span id="editor-help">Du kannst deinen Text jederzeit vor und nach dem Diktieren bearbeiten.</span><button id="clear-button" class="text-button" type="button" disabled>Text leeren</button></div>
+        <div class="editor-footer"><span id="editor-help">Du kannst deinen Text jederzeit vor und nach dem Diktieren bearbeiten.</span></div>
       </div>
       <aside class="controls" aria-label="Aufnahme und Ergebnis">
         <div class="language-setting">
@@ -57,6 +57,7 @@
           <span class="eyebrow">DEIN ERGEBNIS</span>
           <div class="result" role="status" aria-live="polite" aria-atomic="true"><strong id="word-count">–</strong><span id="word-label">Wörter</span><p id="count-note">Bereit zum Zählen</p></div>
           <button id="count-button" class="count-button" type="button">Wörter zählen <span aria-hidden="true">↗</span></button>
+          <button id="clear-button" class="clear-button" type="button" disabled>Text löschen</button>
         </div>
       </aside>
     </section>
