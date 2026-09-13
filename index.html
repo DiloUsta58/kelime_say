@@ -5,20 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#23634d">
   <title>Wortweise – Sprechen. Schreiben. Zählen.</title>
-  <link rel="stylesheet" href="style.css?v=5">
-  <script src="app.js?v=5" defer></script>
+  <link rel="stylesheet" href="style.css?v=8">
+  <script src="app.js?v=8" defer></script>
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="./" aria-label="Wortweise Startseite"><span class="brand-icon" aria-hidden="true">w.</span>wortweise<span class="brand-dot">.</span></a>
-    <span class="header-note">Deine Stimme. Deine Worte.</span>
-  </header>
   <main>
-    <div class="intro">
-      <span class="eyebrow"><span></span> VON DER STIMME ZUM TEXT</span>
-      <h1>Einfach sprechen.<br><span>Jedes Wort zählt.</span></h1>
-      <p>Halte deine Gedanken fest. Sprich deinen Text ein oder tippe ihn selbst – und zähle deine Wörter mit einem Klick.</p>
-    </div>
     <section class="workspace" aria-label="Text diktieren und Wörter zählen">
       <div class="editor">
         <div class="editor-heading"><label for="text-input">Dein Text</label><span id="language-badge" class="language">Automatisch</span></div>
@@ -44,20 +35,23 @@
           <h2 id="mic-title">Bereit, wenn du es bist.</h2>
           <p id="mic-help">Klicke auf das Mikrofon,<br>um die Aufnahme zu starten.</p>
           <p id="status-message" class="status-message" role="status" aria-live="polite">Es wird erst nach deinem Klick zugehört.</p>
-          <div class="microphone-check">
-            <label for="microphone-select">Mikrofon auswählen</label>
-            <select id="microphone-select" aria-describedby="device-hint"><option value="">Standardgerät des Browsers</option></select>
-            <button id="load-devices-button" class="test-mic-button" type="button" aria-pressed="false">Mikrofone freigeben / aktualisieren</button>
-            <p id="device-count" role="status">Geräteliste wird geladen …</p>
-            <p id="device-hint">Bei fehlenden Geräten zuerst freigeben, dann dein Mikrofon auswählen.</p>
-            <span class="device-heading">Verwendetes Mikrofon · letzte Aufnahme</span>
-            <strong id="device-name" role="status">Noch nicht geprüft</strong>
-            <button id="test-mic-button" class="test-mic-button" type="button" aria-pressed="false">Mikrofon testen</button>
-            <label for="input-level">Eingangspegel</label>
-            <meter id="input-level" min="0" max="100" value="0">0</meter>
-            <p id="level-note" role="status">Test startet nur per Klick. Dabei wird kein Text erkannt.</p>
-            <p id="recognition-status" role="status">Texterkennung: noch nicht gestartet</p>
-          </div>
+          <details class="microphone-check">
+            <summary>Geräteauswahl und Mikrofontest</summary>
+            <div class="microphone-check-body">
+              <label for="microphone-select">Mikrofon auswählen</label>
+              <select id="microphone-select" aria-describedby="device-hint"><option value="">Standardgerät des Browsers</option></select>
+              <button id="load-devices-button" class="test-mic-button" type="button" aria-pressed="false">Mikrofone freigeben / aktualisieren</button>
+              <p id="device-count" role="status">Geräteliste wird geladen …</p>
+              <p id="device-hint">Bei fehlenden Geräten zuerst freigeben, dann dein Mikrofon auswählen.</p>
+              <span class="device-heading">Verwendetes Mikrofon · letzte Aufnahme</span>
+              <strong id="device-name" role="status">Noch nicht geprüft</strong>
+              <button id="test-mic-button" class="test-mic-button" type="button" aria-pressed="false">Mikrofon testen</button>
+              <label for="input-level">Eingangspegel</label>
+              <meter id="input-level" min="0" max="100" value="0">0</meter>
+              <p id="level-note" role="status">Test startet nur per Klick. Dabei wird kein Text erkannt.</p>
+              <p id="recognition-status" role="status">Texterkennung: noch nicht gestartet</p>
+            </div>
+          </details>
         </div>
         <div class="result-panel">
           <span class="eyebrow">DEIN ERGEBNIS</span>
@@ -66,15 +60,10 @@
         </div>
       </aside>
     </section>
-    <div class="steps" aria-label="So funktioniert es">
-      <div><span class="step-number">01</span><p><strong>Mikrofon aktivieren</strong><span>Du entscheidest, wann es losgeht.</span></p></div>
-      <div><span class="step-number">02</span><p><strong>Sprechen & bearbeiten</strong><span>Deine Worte erscheinen als Text.</span></p></div>
-      <div><span class="step-number">03</span><p><strong>Wörter zählen</strong><span>Ein Klick. Dein Ergebnis.</span></p></div>
-    </div>
     <details class="help">
       <summary>Gut zu wissen: Mikrofon, Datenschutz & Wortzählung</summary>
       <p>Klicke bei Bedarf auf „Mikrofone freigeben / aktualisieren“ und erlaube den Zugriff. Wähle dann unter „Mikrofon auswählen“ dein Headset oder ein anderes Mikrofon. Die Freigabe öffnet kurz das Standardmikrofon, um die Gerätenamen sichtbar zu machen, und beendet diesen Zugriff wieder. Erst ein weiterer Klick startet den Test oder das Diktieren mit deiner Auswahl.</p>
-      <p>Die Liste zeigt alle Mikrofoneinträge, die Chrome dieser Seite meldet. Dazu gehören auch „Standard“ und „Kommunikation“; diese können dasselbe Gerät mehrfach aufführen. Einträge ohne Geräte-ID sind bis zur Freigabe nicht auswählbar. Falls ein Mikrofon fehlt: anschließen bzw. Bluetooth verbinden, in Windows unter System → Sound → Eingabe aktivieren und die Liste erneut freigeben/aktualisieren. Prüfe auch die Mikrofonliste in den Chrome-Website-Einstellungen. Geräte, die Chrome nicht bereitstellt, kann die Web-App nicht selbst hinzufügen.</p>
+      <p>Die Liste zeigt alle Mikrofoneinträge, die Chrome dieser Seite meldet. Dazu gehören auch „Standard“ und „Kommunikation“; diese können dasselbe Gerät mehrfach aufführen. Einträge ohne Geräte-ID sind bis zur Freigabe nicht auswählbar. Falls ein Mikrofon fehlt: anschließen bzw. Bluetooth verbinden, in Windows unter System → Sound → Eingabe aktivieren und die Liste erneut freigeben/aktualisieren. Bei Bluetooth-Geräten wie JBL muss Windows das Gerät als Eingabe/Mikrofon anzeigen; wenn es nur als Kopfhörer/Lautsprecher verbunden ist, kann Chrome es nicht als Mikrofon anbieten. Prüfe auch die Mikrofonliste in den Chrome-Website-Einstellungen. Geräte, die Chrome nicht bereitstellt, kann die Web-App nicht selbst hinzufügen.</p>
       <p>Mit „Mikrofon testen“ siehst du den Gerätenamen und den Eingangspegel. Der Test verarbeitet das Signal nur im Browser und endet spätestens nach 30 Sekunden. Bewegt sich der Pegel beim Sprechen, kommt Ton an. Bleibt er bei null, prüfe die Stummschaltung am Headset und das Eingabegerät in Chrome bzw. Windows.</p>
       <p>In Chrome am PC ab Version 135 wird der Audiokanal deines ausgewählten Mikrofons direkt an die Texterkennung übergeben. Andere Browser und Chrome auf Android unterstützen diese Übergabe möglicherweise nicht. Dort funktioniert die Geräteauswahl für den Mikrofontest; für das Diktieren musst du „Standardgerät des Browsers“ wählen und das gewünschte Gerät in den Browser- bzw. Systemeinstellungen festlegen. Die App wechselt bei einer ausdrücklich gewählten, nicht verfügbaren Quelle nicht automatisch auf ein anderes Gerät.</p>
       <p>Wähle vor der Aufnahme „Deutsch“ oder „Türkisch“. „Automatisch“ übernimmt deine bevorzugte Browsersprache; die gesprochene Sprache wird dabei nicht automatisch erkannt. Die gewählte Sprache und das Mikrofon werden für deinen nächsten Besuch auf diesem Gerät gespeichert.</p>
@@ -83,6 +72,5 @@
       <p>Gezählt werden Wörter und Zahlen. Satzzeichen und Emojis allein zählen nicht. „Hallo Welt!“ sind 2 Wörter, „E-Mail“ zählt als 1 Wort. Änderungen nach einer Zählung erfordern einen neuen Klick auf „Wörter zählen“.</p>
     </details>
   </main>
-  <footer><span>wortweise.</span><span>Raum für deine Gedanken.</span></footer>
 </body>
 </html>

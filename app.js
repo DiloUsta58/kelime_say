@@ -161,6 +161,7 @@ function finish(current) {
   if (session !== current) return;
   window.clearTimeout(current.timer);
   window.clearTimeout(current.diagnosticTimer);
+  window.clearTimeout(current.restartTimer);
   releaseMicrophone(current);
   session = null;
   renderState("idle");
@@ -270,7 +271,7 @@ async function startRecording(mode = "dictation") {
     recognitionStatus.textContent = "Texterkennung: gewählte Audioquelle nicht unterstützt";
     return;
   }
-  const current = { mode, deviceId, language: recognitionLanguage(), recognition: null, baseText: textInput.value, stopping: false, countAfter: false, error: false, timer: null, diagnosticTimer: null, hasResults: false, hadLevel: false };
+  const current = { mode, deviceId, language: recognitionLanguage(), recognition: null, baseText: textInput.value, stopping: false, countAfter: false, error: false, timer: null, diagnosticTimer: null, restartTimer: null, hasResults: false, hadLevel: false, quickEnds: 0, networkRetries: 0, restarting: false };
   session = current;
   renderState("checking");
   deviceName.textContent = "Warte auf Mikrofonfreigabe …";
@@ -360,6 +361,8 @@ async function startRecording(mode = "dictation") {
 }
 
 function beginRecognition(current) {
+  if (session !== current) return;
+  current.restarting = false;
   let recognition;
   try { recognition = new SpeechRecognitionAPI(); }
   catch {
@@ -432,11 +435,21 @@ function beginRecognition(current) {
   };
   recognition.onerror = (event) => {
     if (session !== current) return;
+    if (event.error === "network" && !current.stopping && current.networkRetries < 2) {
+      current.networkRetries += 1;
+      current.restarting = true;
+      window.clearTimeout(current.diagnosticTimer);
+      recognitionStatus.textContent = `Texterkennung: Verbindungsproblem, Neuversuch ${current.networkRetries}/2`;
+      message("Chromes Spracherkennung ist gerade nicht erreichbar. Die App versucht die Verbindung noch einmal.");
+      current.restartTimer = window.setTimeout(() => beginRecognition(current), 900);
+      recognition.abort();
+      return;
+    }
     const errors = {
       "not-allowed": "Mikrofonzugriff wurde nicht erlaubt. Prüfe die Mikrofonberechtigung dieser Seite in deinem Browser.",
       "service-not-allowed": "Der Browser erlaubt die Spracherkennung nicht. Versuche einen anderen unterstützten Browser.",
       "audio-capture": "Kein verfügbares Mikrofon gefunden. Prüfe den Anschluss und die Mikrofoneinstellungen deines Geräts.",
-      network: "Mikrofonzugriff war möglich, aber der Spracherkennungsdienst ist nicht erreichbar. Prüfe Internetverbindung, VPN oder Firewall und öffne die Seite direkt in Google Chrome.",
+      network: "Mikrofonzugriff war möglich, aber Chromes Spracherkennungsdienst ist nicht erreichbar. Prüfe Internetverbindung, VPN, Firewall, Werbe-/Scriptblocker und öffne die Seite direkt in Google Chrome.",
       "no-speech": "Keine Sprache erkannt. Klicke erneut auf das Mikrofon und sprich deinen Text.",
       "language-not-supported": `Spracherkennung für ${languageName(current.language)} (${current.language}) ist in diesem Browser nicht verfügbar. Wähle eine andere Sprache.`,
       aborted: "Aufnahme abgebrochen. Dein bisheriger Text bleibt erhalten."
@@ -448,7 +461,37 @@ function beginRecognition(current) {
     recognition.abort();
   };
   // Never restart automatically, including after silence or permission errors.
-  recognition.onend = () => finish(current);
+  recognition.onend = () => {
+    if (session !== current || current.stopping || current.error) {
+      finish(current);
+      return;
+    }
+    if (current.restarting) return;
+    window.clearTimeout(current.diagnosticTimer);
+    if (current.mode !== "dictation") {
+      finish(current);
+      return;
+    }
+    const track = current.stream?.getAudioTracks?.()[0];
+    if (!track || track.readyState === "ended") {
+      current.error = true;
+      recognitionStatus.textContent = "Texterkennung: Mikrofonverbindung beendet";
+      message("Die Texterkennung wurde beendet, weil das Mikrofon nicht mehr verfügbar ist.", true);
+      finish(current);
+      return;
+    }
+    current.quickEnds += current.hasResults ? 0 : 1;
+    if (current.quickEnds > 3) {
+      current.error = true;
+      recognitionStatus.textContent = "Texterkennung: bricht sofort ab";
+      message("Chrome beendet die Texterkennung sofort wieder. Prüfe Internetverbindung, Spracheinstellung und ob Chrome Spracherkennung für diese Seite erlaubt.", true);
+      finish(current);
+      return;
+    }
+    recognitionStatus.textContent = "Texterkennung: wird erneut verbunden …";
+    message("Chrome hat die Texterkennung kurz beendet. Die Aufnahme bleibt aktiv und wird erneut verbunden.");
+    current.restartTimer = window.setTimeout(() => beginRecognition(current), 350);
+  };
   try {
     if (canUseSelectedTrack) recognition.start(current.stream.getAudioTracks()[0]);
     else recognition.start();

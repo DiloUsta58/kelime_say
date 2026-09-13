@@ -96,8 +96,8 @@ test('words: whitespace, punctuation, umlauts, hyphens, numbers and emoji', () =
   ]) assert.equal(vm.runInContext(`countWords(${JSON.stringify(text)})`, context), expected, text);
 });
 
-test('microphone stays off until click; interim revisions and restarts do not duplicate text', async () => {
-  const { element: el, instances, captureCalls, tracks } = setup();
+test('microphone stays off until click; interim revisions and recognition reconnects do not duplicate text', async () => {
+  const { element: el, instances, captureCalls, tracks, runTimer } = setup();
   assert.equal(instances.length, 0);
   assert.equal(captureCalls(), 0);
   el('text-input').value = 'Mein Text.';
@@ -114,12 +114,28 @@ test('microphone stays off until click; interim revisions and restarts do not du
   rec.results('Hallo Welt.', 'Noch ein Satz.');
   assert.equal(el('text-input').value, 'Mein Text. Hallo Welt. Noch ein Satz.');
   rec.onend();
-  assert.equal(rec.starts, 1);
-  assert.equal(instances.length, 1);
+  assert.equal(el('text-input').readOnly, true, 'manual recording stays active after Chrome ends recognition');
+  runTimer(350);
+  assert.equal(instances.length, 2);
+  await el('mic-button').click();
+  instances[1].onend();
   assert.equal(el('text-input').readOnly, false);
   await el('mic-button').click();
-  instances[1].results('Weiter.');
+  instances[2].results('Weiter.');
   assert.equal(el('text-input').value, 'Mein Text. Hallo Welt. Noch ein Satz. Weiter.');
+});
+
+test('repeated instant recognition endings produce a clear error instead of flickering forever', async () => {
+  const { element: el, instances, runTimer } = setup();
+  await el('mic-button').click();
+  for (let index = 0; index < 3; index += 1) {
+    instances[index].onend();
+    runTimer(350);
+  }
+  instances[3].onend();
+  assert.equal(el('text-input').readOnly, false);
+  assert.match(el('recognition-status').textContent, /bricht sofort ab/);
+  assert.match(el('status-message').textContent, /beendet die Texterkennung sofort/);
 });
 
 test('count waits for final speech results and marks subsequent edits', async () => {
@@ -257,6 +273,13 @@ test('speech start timeout recovers; network error remains distinguishable from 
   await el('mic-button').click();
   instances[1].onerror({ error: 'network' });
   instances[1].onend();
+  assert.match(el('recognition-status').textContent, /Neuversuch 1\/2/);
+  runTimer(900);
+  instances[2].onerror({ error: 'network' });
+  instances[2].onend();
+  assert.match(el('recognition-status').textContent, /Neuversuch 2\/2/);
+  runTimer(900);
+  instances[3].onerror({ error: 'network' });
   assert.match(el('recognition-status').textContent, /network/);
   assert.match(el('status-message').textContent, /Mikrofonzugriff war möglich/);
 });
