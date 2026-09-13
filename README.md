@@ -5,7 +5,7 @@ Web-App mit HTML, CSS und JavaScript. Keine Installation und kein Build nötig.
 ## Starten
 
 1. Apache im XAMPP Control Panel starten.
-2. Auf diesem PC `http://localhost/W%C3%B6rter_z%C3%A4hlen/` öffnen.
+2. Auf diesem PC `http://localhost/....` öffnen.
 3. Bei Bedarf „Mikrofone freigeben / aktualisieren“ anklicken und den Zugriff erlauben. Die App öffnet das Standardmikrofon kurz für die Gerätenamen und schaltet es wieder aus.
 4. Das gewünschte Mikrofon und „Automatisch“, „Deutsch“ oder „Türkisch“ auswählen. Optional mit „Mikrofon testen“ Gerätename und Pegel prüfen.
 5. Das große Mikrofon anklicken und sprechen. Erneut anklicken, um zu stoppen, oder direkt „Wörter zählen“ wählen.
